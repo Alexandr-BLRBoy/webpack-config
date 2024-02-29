@@ -1,12 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+
 
 
 module.exports = (env) => {
     return {
 
-        mode: env.mode ?? 'development',
+        mode: env.mode ?? 'production',
         entry: path.resolve(__dirname, 'src', 'index.js'),
         output: {
             path: path.resolve(__dirname, 'build'),
@@ -31,19 +34,32 @@ module.exports = (env) => {
                     test: /\.s[ac]ss$/i,
                     use: [
                       // Creates `style` nodes from JS strings
-                      "style-loader",
+                      MiniCssExtractPlugin.loader,
                       // Translates CSS into CommonJS
                       "css-loader",
                       // Compiles Sass to CSS
                       "sass-loader",
                     ],
                   },
+                  {
+                    test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'fonts/[name]-[hash][ext]'
+                    }
+                },
             ]
         },
 
         plugins: [
             new HtmlWebpackPlugin ( {template: path.resolve(__dirname, 'src', 'index.html')} ),
             new webpack.ProgressPlugin(),
+            new MiniCssExtractPlugin(),
+            new CopyPlugin({
+                patterns: [
+                  { from: path.resolve(__dirname, 'src', 'files'), to: path.resolve(__dirname, 'build', 'files') },
+                ],
+              }),
         ],
 
         devServer: {

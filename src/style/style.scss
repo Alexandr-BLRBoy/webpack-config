@@ -1,4 +1,8 @@
+@import './base/fonts.scss';
+@import './base/reset';
+
 .container_title{
+    font-family: 'Oswald-Regular';
     color: aquamarine;
 }
 
